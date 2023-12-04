@@ -1,3 +1,4 @@
+var API_URL: string = "http://192.168.56.102:8000"
 
 var M;
 class Main implements EventListenerObject{
@@ -66,7 +67,7 @@ class Main implements EventListenerObject{
             }
             
         }
-        xmlRequest.open("GET","http://localhost:8000/devices",true)
+        xmlRequest.open("GET",`${API_URL}/devices`,true)
         xmlRequest.send();
     }
 
@@ -87,7 +88,7 @@ class Main implements EventListenerObject{
         }
         
        
-        xmlRequest.open("POST", "http://localhost:8000/device", true)
+        xmlRequest.open("POST", `${API_URL}/device`, true)
         xmlRequest.setRequestHeader("Content-Type", "application/json");
         let s = {
             id: id,
