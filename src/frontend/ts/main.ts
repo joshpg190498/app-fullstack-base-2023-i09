@@ -161,7 +161,12 @@ window.addEventListener("load", () => {
     let checkbox = document.getElementById("cb");
     checkbox.addEventListener("click", main1);
     
-
+    let btnCancelar = document.getElementById("btnCancelar");
+    btnCancelar.addEventListener("click", () => {
+        // Cierra el modal al hacer clic en "Cancelar"
+        let modalInstance = M.Modal.getInstance(document.getElementById("modal1"));
+        modalInstance.close();
+    });
 
 });
 
