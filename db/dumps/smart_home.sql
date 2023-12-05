@@ -32,25 +32,45 @@ SET time_zone = "+00:00";
 -- Table structure for table `Devices`
 --
 
+CREATE TABLE `Icons` (
+  `id` int(11) NOT NULL PRIMARY KEY,
+  `icon` varchar(64) NOT NULL,
+  `description` varchar(128) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `Icons`
+--
+
+INSERT INTO `Icons` (`id`, `icon`, `description`) VALUES
+(1, 'tv', 'television'),
+(2, 'lightbulb_outline', 'luz'),
+(3, 'power', 'interruptor'),
+(4, 'audiotrack', 'audio');
+
 CREATE TABLE `Devices` (
   `id` int(11) NOT NULL,
   `name` varchar(64) NOT NULL,
   `description` varchar(128) NOT NULL,
   `state` int(11) NOT NULL,
-  `type` int(11) NOT NULL
+  `type` int(11) NOT NULL,
+  `iconId` int(11) NOT NULL,
+  `value` float DEFAULT NULL,
+
+  FOREIGN KEY (`iconId`) REFERENCES `Icons`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `Devices`
 --
 
-INSERT INTO `Devices` (`id`, `name`, `description`, `state`, `type`) VALUES
-(1, 'Lampara 1', 'Luz living', 1, 0),
-(2, 'Lampara 2', 'Luz cocina', 0, 0),
-(3, 'Velador', 'Velador living', 1, 0),
-(4, 'Persiana 1', 'Persiana living', 1, 1),
-(5, 'Persiana 2', 'Persiana de la cocina', 1, 1),
-(6, 'Persiana 3', 'Persiana balcon', 0, 1);
+INSERT INTO `Devices` (`id`, `name`, `description`, `state`, `type`, `iconId`, `value`) VALUES
+(1, 'Lampara 1', 'Luz living', 1, 0, 2, NULL),
+(2, 'Lampara 2', 'Luz cocina', 0, 0, 2, NULL),
+(3, 'Velador', 'Velador living', 1, 0, 2, NULL),
+(4, 'Persiana 1', 'Persiana living', 1, 1, 3, 0.3),
+(5, 'Persiana 2', 'Persiana de la cocina', 1, 1, 3, 0.4),
+(6, 'Persiana 3', 'Persiana balcon', 0, 1, 3, 0.5);
 
 --
 -- Indexes for dumped tables
