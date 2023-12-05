@@ -12,7 +12,7 @@ class Main implements EventListenerObject{
             console.log(u.mostrar(),this.usuarios.length);
         }
     }
-    private buscarDevices() {
+    public buscarDevices() {
         
         let xmlRequest = new XMLHttpRequest();
         
@@ -148,6 +148,9 @@ window.addEventListener("load", () => {
     var instances = M.Modal.init(elemsModal, "");
 
     let main1: Main = new Main();
+
+    main1.buscarDevices();
+
     let boton = document.getElementById("btnListar");
     
     boton.addEventListener("click", main1);   

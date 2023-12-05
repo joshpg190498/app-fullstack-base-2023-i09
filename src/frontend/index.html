@@ -34,49 +34,63 @@
                         </ul>
                     </div>
                      <!-- Modal Trigger -->
-                    <p>
-                        <label>
-                          <input type="checkbox" id="cb"  />
-                          <span>Prender</span>
-                        </label>
-                    </p>
-                    <a class="waves-effect waves-light btn modal-trigger" href="#modal1">Modal</a>
+
+                    <a class="waves-effect waves-light btn modal-trigger" href="#modal1">Agregar dispositivo <i class="material-icons" style="vertical-align: bottom;">add</i></a>
 
                     <!-- Modal Structure -->
-                    <div id="modal1" class="modal">
+                    <div id="modal1" class="modal modal-fixed-centered modal-custom">
                         <div class="modal-content">
-                            <div class="col s12 m6 l6">
-                                <h1>Cargar usuario</h1>
-                                <label for="iNombre">Nombre de usuario</label>
-                                <input id="iNombre" type="text" value="" placeholder="jlopez" />
+                            <div class="row">
+                                <div class="col s12">
+                                    <h4 class="center-align">Agregar dispositivo</h4>
+                                    <div class="input-field col s12">
+                                        <input id="iNombre" type="text" class="validate"  />
+                                        <label for="iNombre">Nombre del dispositivo</label>
+                                    </div>
 
-                                <div class="input-field">
-                                    <input id="iPassword" type="password" class="validate">
-                                    <label for="iPassword">Password</label>
+                                    <div class="input-field col s12">
+                                        <input id="iDescripcion" type="text" class="validate"  />
+                                        <label for="iDescripcion">Descripción</label>
+                                    </div>
+
+                                    <div class="input-field col s12">
+                                        <select id="iTipoDispositivo">
+                                          <option value="" disabled selected>Selecciona el tipo de dispositivo</option>
+                                          <option value="0">On/Off</option>
+                                          <option value="1">Regulable</option>
+                                        </select>
+                                        <label>Tipo</label>
+                                    </div>
+                                    <div class="input-field col s12" style="margin: 0px;">
+                                        <div class="input-field col s4">
+                                            <p>
+                                                <label>
+                                                    <input name="iIcono" type="radio" value="0" checked />
+                                                    <span>  
+                                                        <i class="material-icons">tv</i>
+                                                    </span>
+                                                </label>
+                                            </p>
+                                        </div>
+                                        <div class="input-field col s4">
+                                            <p>
+                                                <label>
+                                                    <input name="iIcono" type="radio" value="1" />
+                                                    <span>  
+                                                        <i class="material-icons">power</i>
+                                                    </span>
+                                                </label>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="iIcono" value="0" />
+
+                                    <div class="col s12 center-align">
+                                        <button id="btnGuardar" class="modal-close btn waves-effect waves-light">Guardar</button>
+                                    </div>
                                 </div>
-                                
-                                <p>
-                                    <label>
-                                    <input type="checkbox"  />
-                                    <span>Recordar usuario y contraseña</span>
-                                    </label>
-                                </p>
-                                <p id="pInfo"  ></p>
-                                
-                                <button id="btnGuardar" class="modal-close  btn">Guardar</button>
                             </div>
                         </div>
-                    
-                    </div>
-                   
-                    <div class="input-field col s12">
-                        <select>
-                          <option value="" disabled selected>Choose your option</option>
-                          <option value="1">Option 1</option>
-                          <option value="2">Option 2</option>
-                          <option value="3">Option 3</option>
-                        </select>
-                        <label>Materialize Select</label>
                     </div>
                 </div>
 
@@ -90,7 +104,6 @@
                     <div class="col s4 m4 l2 xl2">
                         <button class="btn waves-effect waves-light button-view" id="btnListar" name="hello_button">Listar</button>
                     </div>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi, alias, pariatur tempore quas at iusto fugit nostrum consequuntur, quidem deleniti ad excepturi non adipisci voluptas eos nisi commodi necessitatibus dolorum.</p>
                 </div>
             </div>	
         </main>
