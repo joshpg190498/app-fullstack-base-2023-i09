@@ -1,4 +1,4 @@
-var API_URL: string = "http://192.168.56.102:8000"
+var API_URL: string = "http://192.168.56.101:8000"
 
 var M;
 class Main implements EventListenerObject{
@@ -29,7 +29,9 @@ class Main implements EventListenerObject{
                     for (let d of datos) {
                         let itemList =
                             ` <li class="collection-item avatar">
-                        <img src="./static/images/lightbulb.png" alt="" class="circle">
+                        <span>  
+                            <i class="material-icons">${d.icon}</i>
+                        </span>
                         <span class="title">${d.name}</span>
                         <p>
                          ${d.description}
@@ -118,25 +120,41 @@ class Main implements EventListenerObject{
         
     }
 
-    handleEvent(object: Event): void {
-        let elemento = <HTMLElement>object.target;
-        
-        
-        if ("btnListar" == elemento.id) {
-            this.buscarDevices();
+    public cargarIconos(): void {
+        let xmlRequest = new XMLHttpRequest();
 
-            
-        } else if ("btnGuardar" == elemento.id) {
-            this.cargarUsuario();
-        } else if (elemento.id.startsWith("cb_")) {
-            let checkbox = <HTMLInputElement>elemento;
-            console.log(checkbox.getAttribute("nuevoAtt"),checkbox.checked, elemento.id.substring(3, elemento.id.length));
-            
-            this.ejecutarPost(parseInt(checkbox.getAttribute("nuevoAtt")),checkbox.checked);
-        }
+        xmlRequest.onreadystatechange = () => {
+            if (xmlRequest.readyState == 4) {
+                if (xmlRequest.status == 200) {
+                    let respuesta = xmlRequest.responseText;
+                    let items: Array<Icono> = JSON.parse(respuesta);
+                    console.log("llego resputa",items);        
 
+                    // Limpia el contenedor antes de agregar nuevos radios
+                    let contenedorIconos = document.getElementById("iIconoContenedor");
+                    contenedorIconos.innerHTML = ""
+                    // Genera radios para cada ícono
+                    for (let item of items) {
+                        let radio =
+                            `<div class="input-field col s4">
+                                <p>
+                                    <label>
+                                        <input name="iIcono" type="radio" value="${item.id}" />
+                                        <span>
+                                            <i class="material-icons">${item.icon}</i>
+                                        </span>
+                                    </label>
+                                </p>
+                            </div>`;
+                        contenedorIconos.innerHTML += radio;
+                    }
+                }
+            }
+        };
+
+        xmlRequest.open("GET", `${API_URL}/icons`, true);
+        xmlRequest.send();
     }
-
 }
 
     
@@ -151,22 +169,54 @@ window.addEventListener("load", () => {
 
     main1.buscarDevices();
 
-    let boton = document.getElementById("btnListar");
+    //let boton = document.getElementById("btnListar");
     
-    boton.addEventListener("click", main1);   
+    //boton.addEventListener("click", main1);   
 
-    let botonGuardar = document.getElementById("btnGuardar");
-    botonGuardar.addEventListener("click",main1);
+    let btnGuardar = document.getElementById("btnGuardar");
+    btnGuardar.addEventListener("click", handleOnClickBtnGuardar);
 
-    let checkbox = document.getElementById("cb");
-    checkbox.addEventListener("click", main1);
+    //let checkbox = document.getElementById("cb");
+    //checkbox.addEventListener("click", main1);
+
+    let btnAbrirModal = document.getElementById("btnAbrirModal");
+    btnAbrirModal.addEventListener("click", handleOnClickBtnAbrirModal);
     
     let btnCancelar = document.getElementById("btnCancelar");
-    btnCancelar.addEventListener("click", () => {
-        // Cierra el modal al hacer clic en "Cancelar"
+    btnCancelar.addEventListener("click", handleOnClickBtnCancelar);
+
+    // handle functions
+
+    function handleOnClickBtnAbrirModal(): void {
+        console.log('handle btnAbrirModal')
+        openModal();
+        main1.cargarIconos();
+    }
+    
+    function handleOnClickBtnCancelar(): void {
+        console.log('handle btnCancelar')
+        closeModal()
+    }
+    
+    function handleOnClickBtnGuardar(): void {
+        console.log('handle BtnGuardar')
+        closeModal()
+    }
+
+    // modal functions
+
+    function openModal(): void {
         let modalInstance = M.Modal.getInstance(document.getElementById("modal1"));
-        modalInstance.close();
-    });
+        modalInstance.open();
+    }
+    
+    function closeModal(): void {
+        let modalInstance = M.Modal.getInstance(document.getElementById("modal1"))
+        modalInstance.close()
+    }
 
 });
+
+
+
 

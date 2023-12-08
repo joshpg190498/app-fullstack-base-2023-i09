@@ -46,31 +46,32 @@ app.post("/device",(req,res,next)=>{
     
 });
 app.get('/devices/', function(req, res, next) {
-    devices = [
-        { 
-            'id': 1, 
-            'name': 'Lampara 1', 
-            'description': 'Luz living', 
-            'state': 0, 
-            'type': 1, 
-        },
-        { 
-            'id': 2, 
-            'name': 'Ventilador 1', 
-            'description': 'Ventilador Habitacion', 
-            'state': 1, 
-            'type': 2, 
-        },
-        { 
-            'id': 3, 
-            'name': 'TV', 
-            'description': 'TV led Habitacion', 
-            'state': 0, 
-            'type': 3, 
+    utils.query(`select d.id, d.name, d.description, d.state, 
+        d.type, i.icon, d.value    
+        from Devices d inner join Icons i on d.iconId = i.id`,(err,rsp,fields)=>{
+        if(err==null){
+            
+            console.log("rspsssssssssss",rsp);
+            res.status(200).send(JSON.stringify(rsp));
+        }else{
+            console.log("err",err);
+            res.status(409).send(err);
         }
-    ]
-    res.send(JSON.stringify(devices)).status(200);
+    });    
 });
+
+app.get('/icons/', function(req, res, next) {
+    console.log('gaaa')
+    utils.query(`select * from Icons`,(err,rsp,fields)=>{
+        if(err==null){            
+            console.log("rspsssssssssss",rsp);
+            res.status(200).send(JSON.stringify(rsp));
+        }else{
+            console.log("err",err);
+            res.status(409).send(err);
+        }
+    });  
+})
 
 app.listen(PORT, function(req, res) {
     console.log("NodeJS API running correctly");

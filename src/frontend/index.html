@@ -35,7 +35,7 @@
                     </div>
                      <!-- Modal Trigger -->
 
-                    <a class="waves-effect waves-light btn modal-trigger" href="#modal1">Agregar dispositivo <i class="material-icons" style="vertical-align: bottom;">add</i></a>
+                    <a class="waves-effect waves-light btn modal-trigger" href="#modal1" id="btnAbrirModal">Agregar dispositivo <i class="material-icons" style="vertical-align: bottom;">add</i></a>
 
                     <!-- Modal Structure -->
                     <div id="modal1" class="modal modal-fixed-centered modal-custom">
@@ -61,33 +61,14 @@
                                         </select>
                                         <label>Tipo</label>
                                     </div>
-                                    <div class="input-field col s12" style="margin: 0px;">
-                                        <div class="input-field col s4">
-                                            <p>
-                                                <label>
-                                                    <input name="iIcono" type="radio" value="0" checked />
-                                                    <span>  
-                                                        <i class="material-icons">tv</i>
-                                                    </span>
-                                                </label>
-                                            </p>
-                                        </div>
-                                        <div class="input-field col s4">
-                                            <p>
-                                                <label>
-                                                    <input name="iIcono" type="radio" value="1" />
-                                                    <span>  
-                                                        <i class="material-icons">power</i>
-                                                    </span>
-                                                </label>
-                                            </p>
-                                        </div>
+                                    <div class="col s12" id="iIconoContenedor">
+                                        <!-- Contenedor para los iconos -->
                                     </div>
                                     <input type="hidden" id="iIcono" value="0" />
 
                                     <div class="col s12 center-align">
-                                        <button id="btnGuardar" class="modal-close btn waves-effect waves-light">Guardar</button>
-                                        <button id="btnCancelar" class="modal-close btn-flat waves-effect waves-light" style="background-color:lightgrey;">Cancelar</button>
+                                        <button id="btnGuardar" class=" btn waves-effect waves-light">Guardar</button>
+                                        <button id="btnCancelar" class=" btn-flat waves-effect waves-light" style="background-color:lightgrey;">Cancelar</button>
                                     </div>
                                 </div>
                             </div>

@@ -4,4 +4,6 @@ class Device{
   description: string;
   state: boolean;
   type: number;
+  icon: string;
+  value: number;
 }
