@@ -35,6 +35,7 @@ app.get("/otraCosa/:id/:algo",(req,res,next)=>{
     });
     
 });
+
 app.post("/device",(req,res,next)=>{
     console.log("Llego el post",
     "UPDATE Devices SET state = "+req.body.state+" WHERE id = "+req.body.id);
@@ -45,6 +46,27 @@ app.post("/device",(req,res,next)=>{
     }
     
 });
+
+app.post("/devices",(req,res,next)=>{
+    const body = req.body
+    let defaultValue = null
+    if(body.tipoDispositivo == "1") {
+        defaultValue = 0.5
+    } 
+    utils.query(`insert into Devices (name, description, state, type, iconId, value) values 
+    ("${body.nombre}", "${body.descripcion}", 1, ${body.tipoDispositivo}, ${body.icono}, ${defaultValue})`,(err,rsp,fields)=>{
+        if(err==null){
+            console.log("rsp",rsp)
+            res.status(200).send({ estado: true, mensaje: "Se guardó correctamente el dispositivo."})
+        }else{
+            console.log("err",err)
+            res.status(409).send({ estado: false, mensaje: "No se pudo crear el dispositivo. Error interno del servidor.", error: err })
+        }
+        console.log(fields)
+    })
+})
+
+
 app.get('/devices/', function(req, res, next) {
     utils.query(`select d.id, d.name, d.description, d.state, 
         d.type, i.icon, d.value    

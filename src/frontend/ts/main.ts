@@ -26,7 +26,7 @@ class Main implements EventListenerObject{
                     let datos:Array<Device> = JSON.parse(respuesta);
                     
                     let ul = document.getElementById("listaDisp"); 
-
+                    ul.innerHTML = "";
                     for (let d of datos) {
                         let itemList =
                             ` <li class="collection-item avatar">
@@ -210,6 +210,27 @@ class Main implements EventListenerObject{
         console.log(this.formulario, 'sauu')
         return this.formulario
     }
+
+    public crearDispositivo(formulario: DatosFormulario): void {
+        let xmlRequest = new XMLHttpRequest()
+
+        xmlRequest.onreadystatechange = () => {
+            if (xmlRequest.readyState == 4) {
+                if (xmlRequest.status == 200) {
+                    let respuesta: any = xmlRequest.responseText;
+                    let jsonRespuesta = JSON.parse(respuesta);
+                    console.log("llego la respuesta", jsonRespuesta)
+                    alert(jsonRespuesta.mensaje)
+                    this.buscarDevices()
+                } else {
+                    alert("Salio mal la consulta")
+                }
+            }
+        }
+        xmlRequest.open("POST", `${API_URL}/devices`, true)
+        xmlRequest.setRequestHeader("Content-Type", "application/json");
+        xmlRequest.send(JSON.stringify(formulario));
+    }   
 }
 
     
@@ -254,9 +275,8 @@ window.addEventListener("load", () => {
     }
     
     function handleOnClickBtnGuardar(): void {
-        let hola = main1.crearFormulario()
-        
-        console.log('handle BtnGuardar', hola)
+        let formulario = main1.crearFormulario()
+        main1.crearDispositivo(formulario)
         //closeModal()
     }
 
