@@ -12,6 +12,7 @@ class Main implements EventListenerObject{
             console.log(u.mostrar(),this.usuarios.length);
         }
     }
+    
     public buscarDevices() {
         
         let xmlRequest = new XMLHttpRequest();
@@ -155,6 +156,60 @@ class Main implements EventListenerObject{
         xmlRequest.open("GET", `${API_URL}/icons`, true);
         xmlRequest.send();
     }
+
+    private formulario: DatosFormulario = {
+        nombre: "",
+        descripcion: "",
+        tipoDispositivo: 0,
+        icono: 0
+    }
+
+    public crearFormulario(): DatosFormulario {
+        const iNombre = <HTMLInputElement>document.getElementById("iNombre");
+        const iDescripcion = <HTMLInputElement>document.getElementById("iDescripcion");
+        const iTipoDispositivo = <HTMLSelectElement>document.getElementById("iTipoDispositivo");
+        const iIconoRadios = document.getElementsByName("iIcono");
+
+        if (iNombre.value.trim() === "") {
+            alert("Por favor, ingrese nombre del dispositivo.");
+            return
+        }
+
+        if (iDescripcion.value.trim() === "") {
+            alert("Por favor, ingrese descripción del dispositivo.")
+            return
+        }
+
+        let iconoSeleccionado = 0
+
+        for (let i = 0; i < iIconoRadios.length; i++) {
+            const radio = iIconoRadios[i] as HTMLInputElement;
+        
+            if (radio.checked) {
+                iconoSeleccionado = Number(radio.value);
+                break; 
+            }
+        }
+
+        if (iTipoDispositivo.value.trim() === "null") {
+            return
+        }
+
+        console.log(iconoSeleccionado, 'que fue')
+
+        if (Number(iconoSeleccionado) === 0) {
+            alert("Por favor, seleccione algún ícono.")
+            return
+        }
+
+        this.formulario.nombre = iNombre.value
+        this.formulario.descripcion = iDescripcion.value
+        this.formulario.tipoDispositivo = Number(iTipoDispositivo.value)
+        this.formulario.icono = iconoSeleccionado
+
+        console.log(this.formulario, 'sauu')
+        return this.formulario
+    }
 }
 
     
@@ -189,8 +244,8 @@ window.addEventListener("load", () => {
 
     function handleOnClickBtnAbrirModal(): void {
         console.log('handle btnAbrirModal')
-        openModal();
-        main1.cargarIconos();
+        openModal()
+        main1.cargarIconos()
     }
     
     function handleOnClickBtnCancelar(): void {
@@ -199,8 +254,10 @@ window.addEventListener("load", () => {
     }
     
     function handleOnClickBtnGuardar(): void {
-        console.log('handle BtnGuardar')
-        closeModal()
+        let hola = main1.crearFormulario()
+        
+        console.log('handle BtnGuardar', hola)
+        //closeModal()
     }
 
     // modal functions
