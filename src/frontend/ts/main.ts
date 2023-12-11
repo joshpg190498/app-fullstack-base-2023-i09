@@ -42,7 +42,7 @@ class Main implements EventListenerObject{
                         <label>
                           Off
                           <input type="checkbox"`;
-                          itemList +=`nuevoAtt="${d.id}" id="cb_${d.id}"`
+                          itemList +=`nuevoAtt="${d.id}"  id="cb_${d.id}"`
                         if (d.state) {
                             itemList+= ` checked `
                         }
@@ -61,10 +61,20 @@ class Main implements EventListenerObject{
                     for (let d of datos) {
                         let checkbox = document.getElementById("cb_" + d.id);
 
-                        checkbox.addEventListener("click", this);
+                        checkbox.addEventListener("click", (event: any): void => {
+                            const checkbox = event.target
+                            const deviceId = checkbox.getAttribute('nuevoatt')
+                            const newState = checkbox.checked
+                    
+                            let body = {
+                                id: deviceId,
+                                state: newState
+                            }
+                            this.actualizarEstado(body)
+                        })
                     }
 
-                }else{
+                } else{
                     console.log("no encontre nada");
                 }
             }
@@ -74,33 +84,8 @@ class Main implements EventListenerObject{
         xmlRequest.send();
     }
 
-    private ejecutarPost(id:number,state:boolean) {
-        let xmlRequest = new XMLHttpRequest();
-
-        xmlRequest.onreadystatechange = () => {
-            if (xmlRequest.readyState == 4) {
-                if (xmlRequest.status == 200) {
-                    console.log("llego resputa",xmlRequest.responseText);        
-                } else {
-                    alert("Salio mal la consulta");
-                }
-            }
-            
-            
-
-        }
-        
-       
-        xmlRequest.open("POST", `${API_URL}/device`, true)
-        xmlRequest.setRequestHeader("Content-Type", "application/json");
-        let s = {
-            id: id,
-            state: state   };
-        xmlRequest.send(JSON.stringify(s));
-    }
-
     private cargarUsuario(): void{
-        let iNombre =<HTMLInputElement> document.getElementById("iNombre");
+        let iNombre = <HTMLInputElement>document.getElementById("iNombre");
         let iPassword = <HTMLInputElement>document.getElementById("iPassword");
         let pInfo = document.getElementById("pInfo");
         if (iNombre.value.length > 3 && iPassword.value.length > 3) {
@@ -195,8 +180,6 @@ class Main implements EventListenerObject{
             return
         }
 
-        console.log(iconoSeleccionado, 'que fue')
-
         if (Number(iconoSeleccionado) === 0) {
             alert("Por favor, seleccione algún ícono.")
             return
@@ -207,7 +190,6 @@ class Main implements EventListenerObject{
         this.formulario.tipoDispositivo = Number(iTipoDispositivo.value)
         this.formulario.icono = iconoSeleccionado
 
-        console.log(this.formulario, 'sauu')
         return this.formulario
     }
 
@@ -217,21 +199,55 @@ class Main implements EventListenerObject{
         xmlRequest.onreadystatechange = () => {
             if (xmlRequest.readyState == 4) {
                 if (xmlRequest.status == 200) {
-                    let respuesta: any = xmlRequest.responseText;
-                    let jsonRespuesta = JSON.parse(respuesta);
-                    console.log("llego la respuesta", jsonRespuesta)
-                    alert(jsonRespuesta.mensaje)
+                    let respuesta: any = xmlRequest.responseText
+                    let jsonRespuesta = JSON.parse(respuesta)
+                    //alert(jsonRespuesta.mensaje)
                     this.buscarDevices()
                 } else {
-                    alert("Salio mal la consulta")
+                    let respuestaError: any = xmlRequest.responseText
+                    let jsonRespuestaError = JSON.parse(respuestaError)
+                    console.log(jsonRespuestaError.mensaje)
+                    //alert(jsonRespuestaError.mensaje)
                 }
             }
         }
         xmlRequest.open("POST", `${API_URL}/devices`, true)
-        xmlRequest.setRequestHeader("Content-Type", "application/json");
-        xmlRequest.send(JSON.stringify(formulario));
+        xmlRequest.setRequestHeader("Content-Type", "application/json")
+        xmlRequest.send(JSON.stringify(formulario))
     }   
+
+    
+
+    private actualizarEstado(body: any): void {
+        let xmlRequest = new XMLHttpRequest();
+
+        xmlRequest.onreadystatechange = () => {
+            if (xmlRequest.readyState == 4) {
+                if (xmlRequest.status == 200) {
+                    let respuesta: any = xmlRequest.responseText
+                    let jsonRespuesta = JSON.parse(respuesta)
+                    //alert(jsonRespuesta.mensaje)
+                } else {
+                    let respuestaError: any = xmlRequest.responseText
+                    let jsonRespuestaError = JSON.parse(respuestaError)
+                    console.log(jsonRespuestaError.mensaje)
+                    //alert(jsonRespuestaError.mensaje)
+                }
+            }
+        }
+        
+        xmlRequest.open("PUT", `${API_URL}/devices/state`, true)
+        xmlRequest.setRequestHeader("Content-Type", "application/json");
+        xmlRequest.send(JSON.stringify(body))
+    }
+
+    private actualizarEstadoEnFrontend(id: number, newState: boolean): void {
+        let checkbox = document.getElementById("cb_" + id) as HTMLInputElement;
+        checkbox.checked = newState;
+    }
 }
+
+
 
     
 window.addEventListener("load", () => {
@@ -277,7 +293,7 @@ window.addEventListener("load", () => {
     function handleOnClickBtnGuardar(): void {
         let formulario = main1.crearFormulario()
         main1.crearDispositivo(formulario)
-        //closeModal()
+        closeModal()
     }
 
     // modal functions

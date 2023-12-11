@@ -36,16 +36,19 @@ app.get("/otraCosa/:id/:algo",(req,res,next)=>{
     
 });
 
-app.post("/device",(req,res,next)=>{
-    console.log("Llego el post",
-    "UPDATE Devices SET state = "+req.body.state+" WHERE id = "+req.body.id);
-    if(req.body.name==""){
-        res.status(409).send("no tengo nada que hacer");
-    }else{
-        res.status(200).send("se guardo el dispositivo");
-    }
-    
-});
+app.put("/devices/state",(req,res,next)=>{
+    const body = req.body
+    utils.query(`update Devices set state = ${body.state} where id = ${body.id}`,(err,rsp,fields)=>{
+        if(err==null){
+            console.log("rsp",rsp)
+            res.status(200).send({ estado: true, mensaje: "Se actualizó el estado del dispositivo.."})
+        }else{
+            console.log("err",err)
+            res.status(409).send({ estado: false, mensaje: "No se pudo actualizar el estado del dispositivo. Error interno del servidor.", error: err })
+        }
+        console.log(fields)
+    }) 
+})
 
 app.post("/devices",(req,res,next)=>{
     const body = req.body

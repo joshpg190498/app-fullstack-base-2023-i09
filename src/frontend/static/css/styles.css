@@ -31,3 +31,14 @@ main {
     max-width: 400px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
+#listaDisp {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.collection-item {
+    width: 30%; /* Ajusta el ancho según tus necesidades */
+    margin-bottom: 20px; /* Espacio entre elementos */
+}
