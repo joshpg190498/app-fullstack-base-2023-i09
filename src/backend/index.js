@@ -34,6 +34,7 @@ app.get("/otraCosa/:id/:algo",(req,res,next)=>{
     
 });
 
+// endpoint para actualizar estado del dispositivo
 app.put("/devices/state",(req,res,next)=>{
     const body = req.body
     utils.query(`update Devices set state = ${body.state} where id = ${body.id}`,(err,rsp,fields)=>{
@@ -48,6 +49,7 @@ app.put("/devices/state",(req,res,next)=>{
     }) 
 })
 
+// endpoint para actualizar valor del dispositivo
 app.put("/devices/value",(req,res,next)=>{
     const body = req.body
     utils.query(`update Devices set value = ${body.value} where id = ${body.id}`,(err,rsp,fields)=>{
@@ -62,6 +64,7 @@ app.put("/devices/value",(req,res,next)=>{
     }) 
 })
 
+// endpoint para crear dispositivo
 app.post("/devices",(req,res,next)=>{
     const body = req.body
     let defaultValue = null
@@ -81,7 +84,7 @@ app.post("/devices",(req,res,next)=>{
     })
 })
 
-
+// endpoint para obtener todos los dispositivo
 app.get('/devices/', function(req, res, next) {
     utils.query(`select d.id, d.name, d.description, d.state, 
         d.type, i.icon, d.value    
@@ -96,6 +99,7 @@ app.get('/devices/', function(req, res, next) {
     });    
 });
 
+// endpoint para eliminar dispositivo
 app.delete("/devices/:id",(req,res,next)=>{
     const deviceId = req.params.id
     utils.query(`delete from Devices where id = ${deviceId}`,(err,rsp,fields)=>{
@@ -110,6 +114,7 @@ app.delete("/devices/:id",(req,res,next)=>{
     }) 
 })
 
+// endpoint para traer información de un dispositivo
 app.get("/devices/:id",(req,res,next)=>{
     const deviceId = req.params.id
     utils.query(`select * from Devices where id = ${deviceId}`,(err,rsp,fields)=>{
@@ -123,6 +128,7 @@ app.get("/devices/:id",(req,res,next)=>{
     }) 
 })
 
+// endpoint para actualizar la información de un dispositivo
 app.put("/devices/:id",(req,res,next)=>{
     const deviceId = req.params.id
     const body = req.body
@@ -140,6 +146,7 @@ app.put("/devices/:id",(req,res,next)=>{
     }) 
 })
 
+// endpoint para traer iconos existentes en BD
 app.get('/icons/', function(req, res, next) {
     utils.query(`select * from Icons`,(err,rsp,fields)=>{
         if(err==null){            

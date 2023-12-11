@@ -15,6 +15,7 @@ class Main implements EventListenerObject{
         }
     }
     
+    // función para traer dispositivos
     public buscarDevices() {
         
         let xmlRequest = new XMLHttpRequest();
@@ -159,6 +160,7 @@ class Main implements EventListenerObject{
         
     }
 
+    // función para obtener iconos - comunicación con backend
     public cargarIconos(): void {
         let xmlRequest = new XMLHttpRequest();
 
@@ -194,6 +196,7 @@ class Main implements EventListenerObject{
         xmlRequest.send();
     }
 
+    // definición de formulario
     private formulario: DatosFormulario = {
         nombre: "",
         descripcion: "",
@@ -201,6 +204,7 @@ class Main implements EventListenerObject{
         icono: 0
     }
 
+    // función para crear formulario
     public crearFormulario(): DatosFormulario {
         const iNombre = <HTMLInputElement>document.getElementById("iNombre");
         const iDescripcion = <HTMLInputElement>document.getElementById("iDescripcion");
@@ -245,6 +249,7 @@ class Main implements EventListenerObject{
         return this.formulario
     }
 
+    // función para crear dispositivo
     public crearDispositivo(formulario: DatosFormulario): void {
         let xmlRequest = new XMLHttpRequest()
 
@@ -269,6 +274,7 @@ class Main implements EventListenerObject{
         xmlRequest.send(JSON.stringify(formulario))
     }   
 
+    // función para actualizar estado de dispositivo
     private actualizarEstado(body: any): void {
         let xmlRequest = new XMLHttpRequest();
 
@@ -292,6 +298,7 @@ class Main implements EventListenerObject{
         xmlRequest.send(JSON.stringify(body))
     }
 
+    // función para actualizar valor de dispositivo
     private actualizarValorEnBaseDeDatos(body: any): void {
 
         let xmlRequest = new XMLHttpRequest()
@@ -314,6 +321,7 @@ class Main implements EventListenerObject{
         xmlRequest.send(JSON.stringify(body))
     }
 
+    // función para limpiar formulario al guardar o cancelar
     public limpiarFormulario(): void {
         const iNombre = <HTMLInputElement>document.getElementById("iNombre")
         const iDescripcion = <HTMLInputElement>document.getElementById("iDescripcion")
@@ -330,6 +338,7 @@ class Main implements EventListenerObject{
         M.FormSelect.init(iTipoDispositivo)
     }
 
+    // función para eliminar dispositivo - comunicación con backend
     private eliminarDispositivo(deviceId: number): void {
         let xmlRequest = new XMLHttpRequest();
 
@@ -353,6 +362,7 @@ class Main implements EventListenerObject{
         xmlRequest.send()
     }
 
+    // manejador para actualizar dispositivo
     private handleUpdateModal(deviceId: number): void {
         let xmlRequest = new XMLHttpRequest();
 
@@ -377,6 +387,7 @@ class Main implements EventListenerObject{
         xmlRequest.send()    
     }
 
+    // función para actualizar formulario al editar dispositivo
     private actualizarFormulario(data: any): void {
         createForm = false
         deviceId = data.id
@@ -384,6 +395,7 @@ class Main implements EventListenerObject{
         this.llenarFormularioActualizar(data)
     }
 
+    // función para llenar formulario en actualización
     private llenarFormularioActualizar(data: any): void {
         const iNombre = <HTMLInputElement>document.getElementById("iNombre")
         const iDescripcion = <HTMLInputElement>document.getElementById("iDescripcion")
@@ -406,6 +418,7 @@ class Main implements EventListenerObject{
         M.FormSelect.init(iTipoDispositivo)
     }
 
+    // función para editar dispositivo - comunicación con backend
     public editarDispositivo(formulario: DatosFormulario): void {
         let xmlRequest = new XMLHttpRequest()
 
@@ -430,8 +443,7 @@ class Main implements EventListenerObject{
         xmlRequest.send(JSON.stringify(formulario))
     }  
 
-    // modal functions
-
+    // modal functions: abrir y cerrar
     public openModal(): void {
         let modalInstance = M.Modal.getInstance(document.getElementById("modal1"));
         modalInstance.open();
@@ -458,23 +470,27 @@ window.addEventListener("load", () => {
     
     //boton.addEventListener("click", main1);   
 
+    // evento botón guardar en modal
     let btnGuardar = document.getElementById("btnGuardar");
     btnGuardar.addEventListener("click", handleOnClickBtnGuardar);
 
     //let checkbox = document.getElementById("cb");
     //checkbox.addEventListener("click", main1);
 
+    // evento botón agregar dispositivo
     let btnAbrirModal = document.getElementById("btnAbrirModal");
     btnAbrirModal.addEventListener("click", handleOnClickBtnAbrirModal);
     
+    // evento botón cancelar en modal
     let btnCancelar = document.getElementById("btnCancelar");
     btnCancelar.addEventListener("click", handleOnClickBtnCancelar);
 
-    // handle functions
-
+    // cargar iconos de modal
     main1.cargarIconos()
 
+    //handlers -------------//
 
+    // manejador botón de agregar dispositivo
     function handleOnClickBtnAbrirModal(): void {
         createForm = true
         deviceId = undefined
@@ -482,12 +498,14 @@ window.addEventListener("load", () => {
         main1.openModal()
     }
     
+    // manejador botón de cancelar en modal
     function handleOnClickBtnCancelar(): void {
         console.log('handle btnCancelar')
         main1.limpiarFormulario()
         main1.closeModal()
     }
     
+    //manejador botón de guardar en modal
     function handleOnClickBtnGuardar(): void {
         let formulario = main1.crearFormulario()
         if(createForm && !deviceId) {
