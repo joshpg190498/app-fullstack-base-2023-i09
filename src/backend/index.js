@@ -50,6 +50,20 @@ app.put("/devices/state",(req,res,next)=>{
     }) 
 })
 
+app.put("/devices/value",(req,res,next)=>{
+    const body = req.body
+    utils.query(`update Devices set value = ${body.value} where id = ${body.id}`,(err,rsp,fields)=>{
+        if(err==null){
+            console.log("rsp",rsp)
+            res.status(200).send({ estado: true, mensaje: "Se actualizó el valor del dispositivo.."})
+        }else{
+            console.log("err",err)
+            res.status(409).send({ estado: false, mensaje: "No se pudo actualizar el valor del dispositivo. Error interno del servidor.", error: err })
+        }
+        console.log(fields)
+    }) 
+})
+
 app.post("/devices",(req,res,next)=>{
     const body = req.body
     let defaultValue = null

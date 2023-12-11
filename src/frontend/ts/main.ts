@@ -65,29 +65,56 @@ class Main implements EventListenerObject{
                                     </div>`
                                 }
                                 if (d.type == 1) {
-                                    itemList += `<div class="range-field">
-                                        <input type="range" nuevoAtt="${d.id} id="rg_${d.id}" min="0" max="100" />
-                                    </div>`
+                                    itemList += `<p class="range-field">
+                                        <input type="range" nuevoAtt="${d.id}" id="rg_${d.id}" min="0" max="100" />
+                                        <span id="valorRango_${d.id}">${d.value * 100}</span>
+                                    </p>`
                                 }
                                 itemList += `</div>
                             </div>
                         </li>`
                         ul.innerHTML += itemList;
                     }
-                    for (let d of datos) {
-                        let checkbox = document.getElementById("cb_" + d.id);
 
-                        checkbox.addEventListener("click", (event: any): void => {
-                            const checkbox = event.target
-                            const deviceId = checkbox.getAttribute('nuevoatt')
-                            const newState = checkbox.checked
-                    
-                            let body = {
-                                id: deviceId,
-                                state: newState
-                            }
-                            this.actualizarEstado(body)
-                        })
+                    for (let d of datos) {
+
+                        if (d.type == 0) {
+
+                            let checkbox = document.getElementById("cb_" + d.id)
+
+                            checkbox.addEventListener("click", (event: any): void => {
+                                const checkbox = event.target
+                                const deviceId = checkbox.getAttribute('nuevoatt')
+                                const newState = checkbox.checked
+                        
+                                let body = {
+                                    id: deviceId,
+                                    state: newState
+                                }
+                                this.actualizarEstado(body)
+                            })
+                        }
+
+                        if (d.type == 1) {
+                            console.log(d)
+                            let rangeInput = document.getElementById("rg_" + d.id)
+                            let valorSpan = document.getElementById(`valorRango_${d.id}`);
+                            rangeInput.addEventListener("input", (event) => {
+                                valorSpan.textContent = rangeInput.value
+                            })
+                            console.log(rangeInput)
+                            rangeInput.addEventListener("change", (event) => {
+                                console.log('que fue')
+                                const deviceId = rangeInput.getAttribute('nuevoAtt')
+                                const newValue = rangeInput.value
+                        
+                                let body = {
+                                    id: deviceId,
+                                    value: Number(newValue) / 100;
+                                }
+                                this.actualizarValorEnBaseDeDatos(body)
+                            })
+                        }
                     }
 
                 } else{
@@ -257,9 +284,27 @@ class Main implements EventListenerObject{
         xmlRequest.send(JSON.stringify(body))
     }
 
-    private actualizarEstadoEnFrontend(id: number, newState: boolean): void {
-        let checkbox = document.getElementById("cb_" + id) as HTMLInputElement;
-        checkbox.checked = newState;
+    private actualizarValorEnBaseDeDatos(body: any): void {
+        console.log(body, 'gaaaa')
+
+        let xmlRequest = new XMLHttpRequest()
+    
+        xmlRequest.onreadystatechange = () => {
+            if (xmlRequest.readyState == 4) {
+                if (xmlRequest.status == 200) {
+                    let respuesta: any = xmlRequest.responseText
+                    let jsonRespuesta = JSON.parse(respuesta)
+                } else {
+                    let respuestaError: any = xmlRequest.responseText
+                    let jsonRespuestaError = JSON.parse(respuestaError)
+                    console.log(jsonRespuestaError.mensaje)
+                }
+            }
+        }
+    
+        xmlRequest.open("PUT", `${API_URL}/devices/value`, true)
+        xmlRequest.setRequestHeader("Content-Type", "application/json")
+        xmlRequest.send(JSON.stringify(body))
     }
 }
 
