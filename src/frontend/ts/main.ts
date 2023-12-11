@@ -28,35 +28,51 @@ class Main implements EventListenerObject{
                     let ul = document.getElementById("listaDisp"); 
                     ul.innerHTML = "";
                     for (let d of datos) {
-                        let itemList =
-                            ` <li class="collection-item avatar">
-                        <span>  
-                            <i class="material-icons">${d.icon}</i>
-                        </span>
-                        <span class="title">${d.name}</span>
-                        <p>
-                         ${d.description}
-                        </p>
-                        <a href="#!" class="secondary-content">
-                        <div class="switch">
-                        <label>
-                          Off
-                          <input type="checkbox"`;
-                          itemList +=`nuevoAtt="${d.id}"  id="cb_${d.id}"`
-                        if (d.state) {
-                            itemList+= ` checked `
-                        }
-                        
-                        itemList+= `>
-                          <span class="lever"></span>
-                          On
-                        </label>
-                      </div>
-                        </a>
-                      </li>`
-                       
-                        ul.innerHTML += itemList;
+                        let itemList =` 
+                        <li class="collection-item custom-item">
+                            <div class="row">
+                                <div class="col s2 collection-item avatar">
+                                    <i class="material-icons circle">${d.icon}</i>
+                                </div>
+                                <div class="col s5">
+                                <span class="title custom-title">${d.name}</span>
+                                <p>${d.description}</p>
+                                </div>
+                                <div class="col">
+                                    <a class="secondary-content">
+                                        <i class="material-icons">edit</i>
+                                        <i class="material-icons">delete</i>
+                                    </a>
+                                </div>
+                               
+                            </div>
+                            <div class="row">
 
+                                <div class="col s12">`
+                                if (d.type == 0) {
+                                    itemList +=`<div class="switch">
+                                        <label>
+                                            Off
+                                            <input type="checkbox"`;
+                                            itemList +=`nuevoAtt="${d.id}"  id="cb_${d.id}"`
+                                            if (d.state) {
+                                                itemList+= ` checked `
+                                            }
+                                            itemList+= `>
+                                            <span class="lever"></span>
+                                            On
+                                        </label>
+                                    </div>`
+                                }
+                                if (d.type == 1) {
+                                    itemList += `<div class="range-field">
+                                        <input type="range" nuevoAtt="${d.id} id="rg_${d.id}" min="0" max="100" />
+                                    </div>`
+                                }
+                                itemList += `</div>
+                            </div>
+                        </li>`
+                        ul.innerHTML += itemList;
                     }
                     for (let d of datos) {
                         let checkbox = document.getElementById("cb_" + d.id);

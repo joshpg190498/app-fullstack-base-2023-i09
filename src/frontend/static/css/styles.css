@@ -40,5 +40,28 @@ main {
 
 .collection-item {
     width: 30%; /* Ajusta el ancho según tus necesidades */
-    margin-bottom: 20px; /* Espacio entre elementos */
+    margin-bottom: 10px; /* Espacio entre elementos */
+    border-bottom: none !important;
+}
+
+.btn-add-device {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.custom-collection {
+    border: none !important
+}
+
+.custom-item {
+    border: 1px solid #888888 !important;
+    margin-bottom: 20px !important;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+
+}
+
+.custom-title {
+    font-size: 18px;
+    font-weight: 700;
 }
