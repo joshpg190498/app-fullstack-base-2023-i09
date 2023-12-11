@@ -1,6 +1,8 @@
 var API_URL: string = "http://192.168.56.101:8000"
 
 var M;
+var createForm = true // create= true, update = false
+var deviceId = undefined
 class Main implements EventListenerObject{
     public usuarios: Array<Usuario>= new Array<Usuario>();
   
@@ -21,7 +23,6 @@ class Main implements EventListenerObject{
      
             if (xmlRequest.readyState == 4) {
                 if(xmlRequest.status==200){
-                    console.log(xmlRequest.responseText, xmlRequest.readyState);    
                     let respuesta = xmlRequest.responseText;
                     let datos:Array<Device> = JSON.parse(respuesta);
                     
@@ -40,8 +41,8 @@ class Main implements EventListenerObject{
                                 </div>
                                 <div class="col">
                                     <a class="secondary-content">
-                                        <i class="material-icons">edit</i>
-                                        <i class="material-icons">delete</i>
+                                        <i class="material-icons custom-icon clickable" nuevoAtt="${d.id}" id="edit_${d.id}">edit</i>
+                                        <i class="material-icons custom-icon clickable" nuevoAtt="${d.id}" id="delete_${d.id}">delete</i>
                                     </a>
                                 </div>
                                
@@ -96,15 +97,12 @@ class Main implements EventListenerObject{
                         }
 
                         if (d.type == 1) {
-                            console.log(d)
                             let rangeInput = document.getElementById("rg_" + d.id)
                             let valorSpan = document.getElementById(`valorRango_${d.id}`);
                             rangeInput.addEventListener("input", (event) => {
                                 valorSpan.textContent = rangeInput.value
                             })
-                            console.log(rangeInput)
                             rangeInput.addEventListener("change", (event) => {
-                                console.log('que fue')
                                 const deviceId = rangeInput.getAttribute('nuevoAtt')
                                 const newValue = rangeInput.value
                         
@@ -115,6 +113,18 @@ class Main implements EventListenerObject{
                                 this.actualizarValorEnBaseDeDatos(body)
                             })
                         }
+
+                        let deleteBtn = document.getElementById("delete_" + d.id)
+                        deleteBtn.addEventListener("click", (event: any): void => {
+                            const deviceId = Number(deleteBtn.getAttribute('nuevoatt'))
+                            this.eliminarDispositivo(deviceId)
+                        })
+
+                        let editBtn = document.getElementById("edit_" + d.id)
+                        editBtn.addEventListener("click", (event: any): void => {
+                            const deviceId = Number(deleteBtn.getAttribute('nuevoatt'))
+                            this.handleUpdateModal(deviceId)
+                        })
                     }
 
                 } else{
@@ -157,7 +167,6 @@ class Main implements EventListenerObject{
                 if (xmlRequest.status == 200) {
                     let respuesta = xmlRequest.responseText;
                     let items: Array<Icono> = JSON.parse(respuesta);
-                    console.log("llego resputa",items);        
 
                     // Limpia el contenedor antes de agregar nuevos radios
                     let contenedorIconos = document.getElementById("iIconoContenedor");
@@ -245,7 +254,7 @@ class Main implements EventListenerObject{
                     let respuesta: any = xmlRequest.responseText
                     let jsonRespuesta = JSON.parse(respuesta)
                     this.limpiarFormulario()
-                    //alert(jsonRespuesta.mensaje)
+                    alert(jsonRespuesta.mensaje)
                     this.buscarDevices()
                 } else {
                     let respuestaError: any = xmlRequest.responseText
@@ -259,8 +268,6 @@ class Main implements EventListenerObject{
         xmlRequest.setRequestHeader("Content-Type", "application/json")
         xmlRequest.send(JSON.stringify(formulario))
     }   
-
-    
 
     private actualizarEstado(body: any): void {
         let xmlRequest = new XMLHttpRequest();
@@ -286,7 +293,6 @@ class Main implements EventListenerObject{
     }
 
     private actualizarValorEnBaseDeDatos(body: any): void {
-        console.log(body, 'gaaaa')
 
         let xmlRequest = new XMLHttpRequest()
     
@@ -317,13 +323,126 @@ class Main implements EventListenerObject{
         iNombre.value = ""
         iDescripcion.value = ""
         iTipoDispositivo.value = "null"
+        for (let i = 0; i < iIconoRadios.length; i++) {
+            const radio = iIconoRadios[i] as HTMLInputElement;
+            radio.checked = false;
+        }
         M.FormSelect.init(iTipoDispositivo)
+    }
+
+    private eliminarDispositivo(deviceId: number): void {
+        let xmlRequest = new XMLHttpRequest();
+
+        xmlRequest.onreadystatechange = () => {
+            if (xmlRequest.readyState == 4) {
+                if (xmlRequest.status == 200) {
+                    let respuesta: any = xmlRequest.responseText
+                    let jsonRespuesta = JSON.parse(respuesta)
+                    this.buscarDevices()
+                    alert(jsonRespuesta.mensaje)
+                } else {
+                    let respuestaError: any = xmlRequest.responseText
+                    let jsonRespuestaError = JSON.parse(respuestaError)
+                    console.log(jsonRespuestaError.mensaje)
+                }
+            }
+        }
+        
+        xmlRequest.open("DELETE", `${API_URL}/devices/${deviceId}`, true)
+        xmlRequest.setRequestHeader("Content-Type", "application/json");
+        xmlRequest.send()
+    }
+
+    private handleUpdateModal(deviceId: number): void {
+        let xmlRequest = new XMLHttpRequest();
+
+        xmlRequest.onreadystatechange = () => {
+            if (xmlRequest.readyState == 4) {
+                if (xmlRequest.status == 200) {
+                    let respuesta: any = xmlRequest.responseText
+                    let jsonRespuesta = JSON.parse(respuesta)
+                    this.actualizarFormulario(jsonRespuesta.data)
+                    //this.buscarDevices()
+                    //alert(jsonRespuesta.mensaje)
+                } else {
+                    let respuestaError: any = xmlRequest.responseText
+                    let jsonRespuestaError = JSON.parse(respuestaError)
+                    console.log(jsonRespuestaError.mensaje)
+                }
+            }
+        }
+        
+        xmlRequest.open("GET", `${API_URL}/devices/${deviceId}`, true)
+        xmlRequest.setRequestHeader("Content-Type", "application/json");
+        xmlRequest.send()    
+    }
+
+    private actualizarFormulario(data: any): void {
+        createForm = false
+        deviceId = data.id
+        this.openModal()
+        this.llenarFormularioActualizar(data)
+    }
+
+    private llenarFormularioActualizar(data: any): void {
+        const iNombre = <HTMLInputElement>document.getElementById("iNombre")
+        const iDescripcion = <HTMLInputElement>document.getElementById("iDescripcion")
+        const iTipoDispositivo = <HTMLSelectElement>document.getElementById("iTipoDispositivo")
+        const iIconoRadios = document.getElementsByName("iIcono")
+
+        iNombre.value =  data.name
+        iDescripcion.value = data.description
+        iTipoDispositivo.value = data.type
+
+        for (let i = 0; i < iIconoRadios.length; i++) {
+            const radio = iIconoRadios[i] as HTMLInputElement;
+            
+            if (Number(radio.value) == data.iconId) {
+                radio.checked = true;
+                break; 
+            }
+        }
+        M.updateTextFields()
+        M.FormSelect.init(iTipoDispositivo)
+    }
+
+    public editarDispositivo(formulario: DatosFormulario): void {
+        let xmlRequest = new XMLHttpRequest()
+
+        xmlRequest.onreadystatechange = () => {
+            if (xmlRequest.readyState == 4) {
+                if (xmlRequest.status == 200) {
+                    let respuesta: any = xmlRequest.responseText
+                    let jsonRespuesta = JSON.parse(respuesta)
+                    this.limpiarFormulario()
+                    alert(jsonRespuesta.mensaje)
+                    this.buscarDevices()
+                } else {
+                    let respuestaError: any = xmlRequest.responseText
+                    let jsonRespuestaError = JSON.parse(respuestaError)
+                    console.log(jsonRespuestaError.mensaje)
+                    //alert(jsonRespuestaError.mensaje)
+                }
+            }
+        }
+        xmlRequest.open("PUT", `${API_URL}/devices/${deviceId}`, true)
+        xmlRequest.setRequestHeader("Content-Type", "application/json")
+        xmlRequest.send(JSON.stringify(formulario))
+    }  
+
+    // modal functions
+
+    public openModal(): void {
+        let modalInstance = M.Modal.getInstance(document.getElementById("modal1"));
+        modalInstance.open();
+    }
+    
+    public closeModal(): void {
+        let modalInstance = M.Modal.getInstance(document.getElementById("modal1"))
+        modalInstance.close()
     }
 }
 
-
-
-    
 window.addEventListener("load", () => {
 
     var elems = document.querySelectorAll('select');
@@ -353,36 +472,33 @@ window.addEventListener("load", () => {
 
     // handle functions
 
+    main1.cargarIconos()
+
+
     function handleOnClickBtnAbrirModal(): void {
+        createForm = true
+        deviceId = undefined
         console.log('handle btnAbrirModal')
-        openModal()
-        main1.cargarIconos()
+        main1.openModal()
     }
     
     function handleOnClickBtnCancelar(): void {
         console.log('handle btnCancelar')
         main1.limpiarFormulario()
-        closeModal()
+        main1.closeModal()
     }
     
     function handleOnClickBtnGuardar(): void {
         let formulario = main1.crearFormulario()
-        main1.crearDispositivo(formulario)
-        closeModal()
-    }
+        if(createForm && !deviceId) {
+            main1.crearDispositivo(formulario)
+        }
 
-    // modal functions
-
-    function openModal(): void {
-        let modalInstance = M.Modal.getInstance(document.getElementById("modal1"));
-        modalInstance.open();
+        if(!createForm && deviceId) {
+            main1.editarDispositivo(formulario)
+        }
+        main1.closeModal()    
     }
-    
-    function closeModal(): void {
-        let modalInstance = M.Modal.getInstance(document.getElementById("modal1"))
-        modalInstance.close()
-    }
-
 });
 
 

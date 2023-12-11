@@ -19,8 +19,6 @@ app.use(express.static('/home/node/app/static/'));
 
 //=======[ Main module code ]==================================================
 app.get("/otraCosa/:id/:algo",(req,res,next)=>{
-    console.log("id",req.params.id)
-    console.log("algo",req.params.algo)
     utils.query("select * from Devices where id="+req.params.id,(err,rsp,fields)=>{
         if(err==null){
             
@@ -89,8 +87,7 @@ app.get('/devices/', function(req, res, next) {
         d.type, i.icon, d.value    
         from Devices d inner join Icons i on d.iconId = i.id`,(err,rsp,fields)=>{
         if(err==null){
-            
-            console.log("rspsssssssssss",rsp);
+            console.log("rsp",rsp)
             res.status(200).send(JSON.stringify(rsp));
         }else{
             console.log("err",err);
@@ -99,11 +96,53 @@ app.get('/devices/', function(req, res, next) {
     });    
 });
 
+app.delete("/devices/:id",(req,res,next)=>{
+    const deviceId = req.params.id
+    utils.query(`delete from Devices where id = ${deviceId}`,(err,rsp,fields)=>{
+        if(err==null){
+            console.log("rsp",rsp)
+            res.status(200).send({ estado: true, mensaje: "Se eliminó el dispositivo correctamente."})
+        }else{
+            console.log("err",err)
+            res.status(409).send({ estado: false, mensaje: "No se pudo eliminar dispositivo. Error interno del servidor.", error: err })
+        }
+        console.log(fields)
+    }) 
+})
+
+app.get("/devices/:id",(req,res,next)=>{
+    const deviceId = req.params.id
+    utils.query(`select * from Devices where id = ${deviceId}`,(err,rsp,fields)=>{
+        if(err==null){
+            res.status(200).send({ estado: true, mensaje: "Se obtuvo el dispositivo correctamente.", data: rsp[0]})
+        }else{
+            console.log("err",err)
+            res.status(409).send({ estado: false, mensaje: "No se pudo obtener el dispositivo. Error interno del servidor.", error: err })
+        }
+        console.log(fields)
+    }) 
+})
+
+app.put("/devices/:id",(req,res,next)=>{
+    const deviceId = req.params.id
+    const body = req.body
+    utils.query(`update Devices set name = "${body.nombre}", description = "${body.descripcion}", 
+    type = "${body.tipoDispositivo}", iconId = "${body.icono}" 
+    where id = ${deviceId}`,(err,rsp,fields)=>{
+        if(err==null){
+            console.log("rsp22",rsp)
+            res.status(200).send({ estado: true, mensaje: "Se actualizó el dispositivo correctamente.", data: rsp[0]})
+        }else{
+            console.log("err",err)
+            res.status(409).send({ estado: false, mensaje: "No se pudo actualizar el dispositivo. Error interno del servidor.", error: err })
+        }
+        console.log(fields)
+    }) 
+})
+
 app.get('/icons/', function(req, res, next) {
-    console.log('gaaa')
     utils.query(`select * from Icons`,(err,rsp,fields)=>{
         if(err==null){            
-            console.log("rspsssssssssss",rsp);
             res.status(200).send(JSON.stringify(rsp));
         }else{
             console.log("err",err);
