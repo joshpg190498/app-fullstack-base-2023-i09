@@ -66,7 +66,7 @@ class Main implements EventListenerObject{
                                 }
                                 if (d.type == 1) {
                                     itemList += `<p class="range-field">
-                                        <input type="range" nuevoAtt="${d.id}" id="rg_${d.id}" min="0" max="100" />
+                                        <input type="range" nuevoAtt="${d.id}" id="rg_${d.id}" min="0" max="100" value="${d.value * 100}"/>
                                         <span id="valorRango_${d.id}">${d.value * 100}</span>
                                     </p>`
                                 }
@@ -244,6 +244,7 @@ class Main implements EventListenerObject{
                 if (xmlRequest.status == 200) {
                     let respuesta: any = xmlRequest.responseText
                     let jsonRespuesta = JSON.parse(respuesta)
+                    this.limpiarFormulario()
                     //alert(jsonRespuesta.mensaje)
                     this.buscarDevices()
                 } else {
@@ -306,6 +307,18 @@ class Main implements EventListenerObject{
         xmlRequest.setRequestHeader("Content-Type", "application/json")
         xmlRequest.send(JSON.stringify(body))
     }
+
+    public limpiarFormulario(): void {
+        const iNombre = <HTMLInputElement>document.getElementById("iNombre")
+        const iDescripcion = <HTMLInputElement>document.getElementById("iDescripcion")
+        const iTipoDispositivo = <HTMLSelectElement>document.getElementById("iTipoDispositivo")
+        const iIconoRadios = document.getElementsByName("iIcono")
+
+        iNombre.value = ""
+        iDescripcion.value = ""
+        iTipoDispositivo.value = "null"
+        M.FormSelect.init(iTipoDispositivo)
+    }
 }
 
 
@@ -348,6 +361,7 @@ window.addEventListener("load", () => {
     
     function handleOnClickBtnCancelar(): void {
         console.log('handle btnCancelar')
+        main1.limpiarFormulario()
         closeModal()
     }
     
